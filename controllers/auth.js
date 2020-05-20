@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport(
   sendgridTransport({
     auth: {
       api_key:
-        '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'
+        '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'
     }
   })
 );
@@ -28,8 +28,8 @@ exports.getLogin = (req, res, next) => {
     pageTitle: 'Login',
     errorMessage: message,
     oldInput: {
-        email: '',
-        password: ''
+      email: '',
+      password: ''
     },
     validationErrors: []
   });
@@ -66,8 +66,8 @@ exports.postLogin = (req, res, next) => {
       pageTitle: 'Login',
       errorMessage: errors.array()[0].msg,
       oldInput: {
-          email: email,
-          password: password
+        email: email,
+        password: password
       },
       validationErrors: errors.array()
     });
@@ -77,15 +77,15 @@ exports.postLogin = (req, res, next) => {
     .then(user => {
       if (!user) {
         return res.status(422).render('auth/login', {
-            path: '/login',
-            pageTitle: 'Login',
-            errorMessage: 'Invalid email or password.',
-            oldInput: {
-                email: email,
-                password: password
-            },
-            validationErrors: []
-          });
+          path: '/login',
+          pageTitle: 'Login',
+          errorMessage: 'Invalid email or password.',
+          oldInput: {
+            email: email,
+            password: password
+          },
+          validationErrors: []
+        });
       }
       bcrypt
         .compare(password, user.password)
@@ -103,8 +103,8 @@ exports.postLogin = (req, res, next) => {
             pageTitle: 'Login',
             errorMessage: 'Invalid email or password.',
             oldInput: {
-                email: email,
-                password: password
+              email: email,
+              password: password
             },
             validationErrors: []
           });
@@ -114,7 +114,11 @@ exports.postLogin = (req, res, next) => {
           res.redirect('/login');
         });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postSignup = (req, res, next) => {
@@ -157,7 +161,9 @@ exports.postSignup = (req, res, next) => {
       // });
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -203,7 +209,7 @@ exports.postReset = (req, res, next) => {
         res.redirect('/');
         transporter.sendMail({
           to: req.body.email,
-          from: 'chiragwadhwa.55555@gmail.com',
+          from: 'shop@node-complete.com',
           subject: 'Password reset',
           html: `
             <p>You requested a password reset</p>
@@ -212,7 +218,9 @@ exports.postReset = (req, res, next) => {
         });
       })
       .catch(err => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
       });
   });
 };
@@ -236,7 +244,9 @@ exports.getNewPassword = (req, res, next) => {
       });
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -265,6 +275,8 @@ exports.postNewPassword = (req, res, next) => {
       res.redirect('/login');
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
